@@ -12,7 +12,6 @@
 - [프로젝트 목표](#프로젝트-목표)
 - [기술스택](#기술-스택)
 - [WIKI 문서](#wiki)
-- [Architecture](#architecture)
 
 # O-GYM
 
