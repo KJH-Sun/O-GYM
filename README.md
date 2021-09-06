@@ -45,9 +45,7 @@ COVID-19로 인해 UN-TACT 시대가 열렸고, 또한 건강을 유지하는 �
 
 ------
 
-프로젝트의 모든 정보는 [WIKI](https://lab.ssafy.com/s05-webmobile1-sub3/S05P13B305/-/wikis/Home)를 통해 참고하실 수 있습니다.
+프로젝트의 모든 정보는 [WIKI](https://github.com/KJH-Sun/O-GYM/wiki)를 통해 참고하실 수 있습니다.
 
-# Architecture
 
----
 
