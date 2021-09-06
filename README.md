@@ -1,9 +1,10 @@
 <p align="center">
-    <img src="/uploads/fb20fd2eb8d0b25111045109da7b0398/OGYM_로고-removebg-preview.png" alt="OGYM_로고-removebg-preview" width="298">    
+    <img src="https://user-images.githubusercontent.com/64529208/132216276-38a1c2b5-af46-41c4-9a27-0af2a67fd7ab.png" alt="OGYM_로고-removebg-preview" width="298">    
 </p>
 <p align="center">
     SSAFY 2학기 공통 프로젝트 - OGYM
 </p>
+
 
 ## Quick Links 
 
@@ -36,7 +37,7 @@ COVID-19로 인해 UN-TACT 시대가 열렸고, 또한 건강을 유지하는 �
 
 ------
 
-![기술스택](/uploads/777ee54b4b58eb5e659bc9c026cd1284/기술스택.png)
+![기술스택](https://user-images.githubusercontent.com/64529208/132216663-6d6670e0-f14f-4562-806c-48071656e92a.png)
 
 
 
@@ -48,6 +49,5 @@ COVID-19로 인해 UN-TACT 시대가 열렸고, 또한 건강을 유지하는 �
 
 # Architecture
 
---- 
-
+---
 
