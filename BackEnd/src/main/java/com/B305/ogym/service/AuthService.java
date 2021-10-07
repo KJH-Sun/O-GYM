@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class AuthService {
 
@@ -25,7 +25,6 @@ public class AuthService {
     private final RedisUtil redisUtil;
 
     // 로그인 관련 메서드
-    @Transactional
     public TokenDto authorize(String email, String password) {
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(email, password);
@@ -35,14 +34,11 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String authorities = getAuthorities(authentication);
-        TokenDto tokenDto = tokenProvider.createToken(authentication.getName(), authorities);
 
-        redisUtil.set(email, tokenDto.getRefreshToken(), 60 * 24 * 7);
-        return tokenDto;
+        return tokenProvider.createToken(authentication.getName(), authorities);
     }
 
     // 재발급 관련 메서드
-    @Transactional
     public TokenDto reissue(String requestAccessToken, String requestRefreshToken) {
         if (!tokenProvider.validateToken(requestRefreshToken)) {
             throw new UnauthorizedException("유효하지 않은 RefreshToken 입니다");
@@ -51,26 +47,21 @@ public class AuthService {
 
         UserBase principal = (UserBase) authentication.getPrincipal();
 
-        if (!redisUtil.hasKey(principal.getEmail())) {
-            throw new UnauthorizedException("인증되지 않은 유저입니다");
-        }
-
-        if (!redisUtil.get(principal.getEmail()).equals(requestRefreshToken)) {
-            throw new RuntimeException("토큰이 일치하지 않습니다.");
-        }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String authorities = getAuthorities(authentication);
 
-        TokenDto tokenDto = tokenProvider.createToken(principal.getEmail(), authorities);
-
-        redisUtil.set(principal.getEmail(), tokenDto.getRefreshToken(), 60 * 24 * 7);
-
-        return tokenDto;
+        return tokenProvider.createToken(principal.getEmail(), authorities);
     }
+
     // 권한 가져오기
     public String getAuthorities(Authentication authentication) {
         return authentication.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
             .collect(Collectors.joining(","));
+    }
+
+    public void logout(String accessToken, String refreshToken) {
+        redisUtil.setBlackList(accessToken, "accessToken", 1800);
+        redisUtil.setBlackList(refreshToken, "refreshToken", 60400);
     }
 }

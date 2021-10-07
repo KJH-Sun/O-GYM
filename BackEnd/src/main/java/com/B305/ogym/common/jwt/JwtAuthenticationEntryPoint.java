@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 
 /*
- *  유효한 자격증명을 제공하지 않고 접근하려 할 때 에러 처리
+ *  유효한 자격증명을 제공하지 않고 접근하려 할 때 에러 처리하기 위한 EntryPoint
  */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {

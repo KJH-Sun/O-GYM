@@ -1,6 +1,5 @@
 package com.B305.ogym.domain.users.common;
 
-import com.B305.ogym.domain.authority.Authority;
 import com.B305.ogym.domain.users.BaseTimeEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.jsonwebtoken.Claims;
@@ -14,8 +13,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import lombok.AccessLevel;
@@ -60,9 +57,7 @@ public class UserBase extends BaseTimeEntity {
     @Embedded
     private ProfilePicture profilePicture; // 프로필 사진
 
-    @ManyToOne
-    @JoinColumn(name = "authority")
-    private Authority authority; // 권한 정보
+    private String authority; // 권한 정보
 
     @JsonIgnore
     @Transient
@@ -74,7 +69,7 @@ public class UserBase extends BaseTimeEntity {
         this.role = claims.get("role").toString();
     }
 
-    public void setRole(Authority authority) {
+    public void setRole(String authority) {
         this.authority = authority;
     }
 

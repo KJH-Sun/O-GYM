@@ -6,8 +6,6 @@ import com.B305.ogym.controller.dto.UserDto.CareerDto;
 import com.B305.ogym.controller.dto.UserDto.CertificateDto;
 import com.B305.ogym.controller.dto.UserDto.ProfileDto;
 import com.B305.ogym.controller.dto.UserDto.SnsDto;
-import com.B305.ogym.domain.authority.Authority;
-import com.B305.ogym.domain.authority.AuthorityRepository;
 import com.B305.ogym.domain.users.UserRepository;
 import com.B305.ogym.domain.users.common.ProfilePicture;
 import com.B305.ogym.domain.users.common.UserBase;
@@ -42,7 +40,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final PTTeacherRepository ptTeacherRepository;
     private final PTStudentRepository ptStudentRepository;
-    private final AuthorityRepository authorityRepository;
     private final RedisUtil redisUtil;
 
     private final String ROLE_PTTEACHER = "ROLE_PTTEACHER";
@@ -59,26 +56,20 @@ public class UserService {
             throw new UserDuplicateNicknameException("이미 가입되어 있는 nickname입니다.");
         }
         if (ROLE_PTTEACHER.equals(userRequest.getRole())) {
-            Authority teacherRole = authorityRepository.findById(ROLE_PTTEACHER).orElseThrow(
-                () -> new AuthorityNotFoundException("해당 권한이 존재하지 않습니다.")
-            );
 
             PTTeacher ptTeacher = userRequest.toPTTeacherEntity();
             ptTeacher.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-            ptTeacher.setRole(teacherRole);
+            ptTeacher.setRole(ROLE_PTTEACHER);
 
             userRequest.getCertificates().forEach(ptTeacher::addCertificate);
             userRequest.getCareers().forEach(ptTeacher::addCareer);
             userRequest.getSnsAddrs().forEach(ptTeacher::addSns);
             ptTeacherRepository.save(ptTeacher);
         } else {
-            Authority studentRole = authorityRepository.findById(ROLE_PTSTUDENT).orElseThrow(
-                () -> new AuthorityNotFoundException("해당 권한이 존재하지 않습니다.")
-            );
 
             PTStudent ptStudent = userRequest.toPTStudentEntity();
             ptStudent.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-            ptStudent.setRole(studentRole);
+            ptStudent.setRole(ROLE_PTSTUDENT);
             if (userRequest.getMonthlyHeights().size() != 12
                 || userRequest.getMonthlyWeights().size() != 12) {
                 throw new NotValidRequestParamException("12개월의 health 정보를 입력하지 않았습니다.");
@@ -96,7 +87,6 @@ public class UserService {
     public void deleteUserBase(String userEmail, String accessToken) {
         redisUtil.setBlackList(accessToken, userEmail, 1800);
         //accessToken 블랙리스트에 저장
-        redisUtil.delete(userEmail);
         UserBase user = userRepository.findByEmail(userEmail)
             .orElseThrow(() -> new UserNotFoundException("해당하는 이메일이 존재하지 않습니다."));
         userRepository.delete(user);
@@ -108,14 +98,14 @@ public class UserService {
         UserBase user = userRepository.findByEmail(userEmail)
             .orElseThrow(() -> new UserNotFoundException("해당하는 이메일이 존재하지 않습니다."));
         Map<String, Object> map = new HashMap<>();
-        if (ROLE_PTTEACHER.equals(user.getAuthority().getAuthorityName())) {
+        if (ROLE_PTTEACHER.equals(user.getAuthority())) {
             PTTeacher teacher = ptTeacherRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserNotFoundException("해당하는 이메일이 존재하지 않습니다."));
-            req.stream().forEach(o -> {
+            req.forEach(o -> {
                 if ("snss".equals(o)) {
                     List<SnsDto> snssDto = new ArrayList<>();
                     List<Sns> snss = teacher.getSnss();
-                    snss.stream().forEach(sns -> {
+                    snss.forEach(sns -> {
                         snssDto.add(
                             SnsDto.builder()
                                 .platform(sns.getPlatform())
@@ -127,7 +117,7 @@ public class UserService {
                 } else if ("careers".equals(o)) {
                     List<CareerDto> careersDto = new ArrayList<>();
                     List<Career> careers = teacher.getCareers();
-                    careers.stream().forEach(career -> {
+                    careers.forEach(career -> {
                         careersDto.add(
                             CareerDto.builder()
                                 .company(career.getCompany())
@@ -140,7 +130,7 @@ public class UserService {
                 } else if ("certificates".equals(o)) {
                     List<CertificateDto> certificatesDto = new ArrayList<>();
                     List<Certificate> certificates = teacher.getCertificates();
-                    certificates.stream().forEach(certificate -> {
+                    certificates.forEach(certificate -> {
                             certificatesDto.add(
                                 CertificateDto.builder()
                                     .name(certificate.getName())
@@ -158,7 +148,7 @@ public class UserService {
         } else {
             PTStudent student = ptStudentRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserNotFoundException("해당하는 이메일이 존재하지 않습니다."));
-            req.stream().forEach(o -> {
+            req.forEach(o -> {
                 map.put(o, student.getInfo(o));
             });
             return map;

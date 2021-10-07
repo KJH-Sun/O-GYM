@@ -7,7 +7,6 @@ import com.B305.ogym.common.util.RestResponsePage;
 import com.B305.ogym.controller.dto.PTDto.SearchDto;
 import com.B305.ogym.controller.dto.PTDto.reservationRequest;
 import com.B305.ogym.controller.dto.UserDto.SaveUserRequest;
-import com.B305.ogym.domain.authority.Authority;
 import com.B305.ogym.domain.mappingTable.PTStudentPTTeacher;
 import com.B305.ogym.domain.mappingTable.PTStudentPTTeacherRepository;
 import com.B305.ogym.domain.users.UserRepository;
@@ -26,7 +25,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
@@ -312,7 +310,7 @@ class PTServiceTest {
     public void getReservationTime_success() throws Exception {
         //given
         var user = createStudent();
-        user.setRole(new Authority("ROLE_PTSTUDENT"));
+        user.setRole("ROLE_PTSTUDENT");
         given(userRepository.findByEmail(user.getEmail())).willReturn(Optional.of(user));
         //when
         ptService.getReservationTime(user.getEmail());
@@ -325,7 +323,7 @@ class PTServiceTest {
     public void getReservationTime_userNotFound() throws Exception {
         //given
         var user = createStudent();
-        user.setRole(new Authority("ROLE_PTSTUDENT"));
+        user.setRole("ROLE_PTSTUDENT");
         given(userRepository.findByEmail(user.getEmail()))
             .willThrow(new UserNotFoundException("이미 탈퇴한 유저입니다."));
         //when

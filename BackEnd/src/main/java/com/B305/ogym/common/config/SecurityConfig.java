@@ -2,7 +2,7 @@ package com.B305.ogym.common.config;
 
 import com.B305.ogym.common.jwt.JwtAccessDeniedHandler;
 import com.B305.ogym.common.jwt.JwtAuthenticationEntryPoint;
-import com.B305.ogym.common.jwt.JwtSecurityConfig;
+import com.B305.ogym.common.jwt.JwtFilter;
 import com.B305.ogym.common.jwt.TokenProvider;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +15,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /*
     Spring Security 환경설정
@@ -27,18 +29,15 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final TokenProvider tokenProvider;
-    private final CorsFilter corsFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     public SecurityConfig(
         TokenProvider tokenProvider,
-        CorsFilter corsFilter,
         JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
         JwtAccessDeniedHandler jwtAccessDeniedHandler
     ) {
         this.tokenProvider = tokenProvider;
-        this.corsFilter = corsFilter;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
@@ -62,18 +61,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
+        JwtFilter jwtFilter = new JwtFilter(tokenProvider);
         httpSecurity
             // token을 사용하는 방식이기 때문에 csrf를 disable합니다.
             .csrf().disable()
 
-            .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
-
+            .cors().configurationSource(corsConfigurationSource())
+            .and()
             .exceptionHandling()
             .authenticationEntryPoint(jwtAuthenticationEntryPoint)
             .accessDeniedHandler(jwtAccessDeniedHandler)
-
-            // enable h2-console
+            // jwt 토큰 필터 ADD
             .and()
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            // enable h2-console
             .headers()
             .frameOptions()
             .sameOrigin()
@@ -91,9 +92,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/api/hello").permitAll()
             .antMatchers("/api/docs/api-doc.html").permitAll()
 
-            .anyRequest().authenticated()
+            .anyRequest().authenticated();
+    }
 
-            .and()
-            .apply(new JwtSecurityConfig(tokenProvider));
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOrigin("http://i5b305.p.ssafy.io:3000");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/api/**", configuration);
+        return source;
     }
 }

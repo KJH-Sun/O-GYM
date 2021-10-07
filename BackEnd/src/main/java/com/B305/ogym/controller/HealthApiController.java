@@ -2,6 +2,7 @@ package com.B305.ogym.controller;
 
 import com.B305.ogym.controller.dto.HealthDto;
 import com.B305.ogym.controller.dto.HealthDto.MyHealthResponse;
+import com.B305.ogym.controller.dto.HealthDto.MyStudentsHealthListResponse;
 import com.B305.ogym.controller.dto.SuccessResponseDto;
 import com.B305.ogym.domain.users.common.UserBase;
 import com.B305.ogym.service.HealthService;
@@ -24,20 +25,17 @@ public class HealthApiController {
     // 선생님 : 학생의 건강정보 조회
     @GetMapping("/mystudents")
     @PreAuthorize("hasAnyRole('PTTEACHER')")
-    public ResponseEntity<SuccessResponseDto> getMyStudentsHealth(
+    public ResponseEntity<MyStudentsHealthListResponse> getMyStudentsHealth(
         @AuthenticationPrincipal String userEmail
     ) {
-        return ResponseEntity.ok(new SuccessResponseDto<HealthDto.MyStudentsHealthListResponse>(
-            200, "건강정보 조회에 성공했습니다.", healthService.findMyStudentsHealth(userEmail)
-        ));
+        return ResponseEntity.ok(healthService.findMyStudentsHealth(userEmail));
     }
 
     // 학생 : 자신의 건강정보 조회
     @GetMapping("/myhealth")
     @PreAuthorize("hasAnyRole('PTSTUDENT')")
-    public ResponseEntity<SuccessResponseDto> getMyHealth(@AuthenticationPrincipal String userEmail) {
-        return ResponseEntity.ok(new SuccessResponseDto<MyHealthResponse>(
-            200, "건강정보 조회에 성공했습니다.", healthService.getMyHealth(userEmail)
-        ));
+    public ResponseEntity<MyHealthResponse> getMyHealth(
+        @AuthenticationPrincipal String userEmail) {
+        return ResponseEntity.ok(healthService.getMyHealth(userEmail));
     }
 }

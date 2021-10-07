@@ -142,7 +142,7 @@ public class PTService {
                             .reservationTime(o.getReservationDate())
                             .nickname(o.getPtStudent().getNickname())
                             .username(o.getPtStudent().getUsername())
-                            .profileUrl((String)o.getPtStudent().getInfo("profilePictureURL"))
+                            .profileUrl((String) o.getPtStudent().getInfo("profilePictureURL"))
                             .email(o.getPtStudent().getEmail())
                             .build()
                     );
@@ -157,7 +157,7 @@ public class PTService {
                             .reservationTime(o.getReservationDate())
                             .nickname(o.getPtTeacher().getNickname())
                             .username(o.getPtTeacher().getUsername())
-                            .profileUrl((String)o.getPtTeacher().getInfo("profilePictureURL"))
+                            .profileUrl((String) o.getPtTeacher().getInfo("profilePictureURL"))
                             .email(o.getPtTeacher().getEmail())
                             .build()
                     );
@@ -195,8 +195,7 @@ public class PTService {
         List<Certificate> certificates = ptTeacher.getCertificates();
         List<CertificateDto> certificateDtos = new ArrayList<>();
 
-        for (int i = 0; i < certificates.size(); i++) {
-            Certificate certificate = certificates.get(i);
+        for (Certificate certificate : certificates) {
             CertificateDto certificateDto = CertificateDto.builder()
                 .name(certificate.getName())
                 .date(certificate.getDate())
@@ -208,8 +207,7 @@ public class PTService {
         List<Career> careers = ptTeacher.getCareers();
         List<CareerDto> careerDtos = new ArrayList<>();
 
-        for (int i = 0; i < careers.size(); i++) {
-            Career career = careers.get(i);
+        for (Career career : careers) {
             CareerDto careerDto = CareerDto.builder()
                 .company(career.getCompany())
                 .startDate(career.getStartDate())
@@ -223,8 +221,7 @@ public class PTService {
         List<PTStudentPTTeacher> ptStudentPTTeachersList = new ArrayList<>(ptStudentPTTeachers);
         List<LocalDateTime> reservations = new ArrayList<>();
 
-        for (int i = 0; i < ptStudentPTTeachersList.size(); i++) {
-            PTStudentPTTeacher ptStudentPTTeacher = ptStudentPTTeachersList.get(i);
+        for (PTStudentPTTeacher ptStudentPTTeacher : ptStudentPTTeachersList) {
             reservations.add(ptStudentPTTeacher.getReservationDate());
         }
 
@@ -233,8 +230,7 @@ public class PTService {
         List<Sns> snsList = ptTeacher.getSnss();
         List<SnsDto> snsDtos = new ArrayList<>();
 
-        for (int i = 0; i < snsList.size(); i++) {
-            Sns sns = snsList.get(i);
+        for (Sns sns : snsList) {
             SnsDto snsDto = SnsDto.builder()
                 .platform(sns.getPlatform())
                 .url(sns.getUrl())
@@ -242,7 +238,7 @@ public class PTService {
             snsDtos.add(snsDto);
         }
 
-        PTTeacherDto ptTeacherDto = PTTeacherDto.builder().username(ptTeacher.getUsername())
+        return PTTeacherDto.builder().username(ptTeacher.getUsername())
             .gender(ptTeacher.getGender())
             .nickname(ptTeacher.getNickname())
             .age(ptTeacher.getAge())
@@ -258,8 +254,6 @@ public class PTService {
             .reservations(reservations)
             .snsList(snsDtos)
             .build();
-
-        return ptTeacherDto;
 
     }
 

@@ -75,14 +75,14 @@ public class PTStudent extends UserBase {
                 return null;
         }else if("heights".equals(req)) {
             List<Integer> heights = new ArrayList<>();
-            for(int i = 0 ; i < this.monthly.size(); i++){
-                heights.add(monthly.get(i).getHeight());
+            for (Monthly value : this.monthly) {
+                heights.add(value.getHeight());
             }
             return heights;
         }else if("weights".equals(req)) {
             List<Integer> weights = new ArrayList<>();
-            for(int i = 0 ; i < this.monthly.size(); i++){
-                weights.add(monthly.get(i).getWeight());
+            for (Monthly value : this.monthly) {
+                weights.add(value.getWeight());
             }
             return weights;
         }else{
@@ -113,23 +113,19 @@ public class PTStudent extends UserBase {
             weightList.set(month - 1, weight);
         }
 
-        MyHealthResponse myHealthResponse =
-            MyHealthResponse.builder()
-                .heightList(heightList)
-                .weightList(weightList)
-                .build();
-
-        return myHealthResponse;
+        return MyHealthResponse.builder()
+            .heightList(heightList)
+            .weightList(weightList)
+            .build();
     }
     // 예약을 위한 메서드
     public PTStudentPTTeacher makeReservation(PTTeacher ptTeacher, PTStudent ptStudent,
         LocalDateTime time, String description) {
-        PTStudentPTTeacher ptStudentPTTeacher = PTStudentPTTeacher.builder()
+        return PTStudentPTTeacher.builder()
             .ptTeacher(ptTeacher)
             .ptStudent(ptStudent)
             .reservationDate(time)
             .description(description)
             .build();
-        return ptStudentPTTeacher;
     }
 }

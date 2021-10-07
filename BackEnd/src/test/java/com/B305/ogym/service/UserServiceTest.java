@@ -8,8 +8,6 @@ import static org.mockito.Mockito.when;
 
 import com.B305.ogym.common.util.RedisUtil;
 import com.B305.ogym.controller.dto.UserDto.SaveUserRequest;
-import com.B305.ogym.domain.authority.Authority;
-import com.B305.ogym.domain.authority.AuthorityRepository;
 import com.B305.ogym.domain.users.UserRepository;
 import com.B305.ogym.domain.users.ptStudent.PTStudent;
 import com.B305.ogym.domain.users.ptStudent.PTStudentRepository;
@@ -44,8 +42,6 @@ class UserServiceTest {
     PTTeacherRepository ptTeacherRepository;
     @Mock
     PTStudentRepository ptStudentRepository;
-    @Mock
-    AuthorityRepository authorityRepository;
     @Mock
     PasswordEncoder passwordEncoder;
 
@@ -106,8 +102,6 @@ class UserServiceTest {
         SaveUserRequest studentRequest = createStudentRequest();
         given(userRepository.existsByEmail("hello@naver.com")).willReturn(false);
         given(userRepository.existsByNickname("닉네임")).willReturn(false);
-        given(authorityRepository.findById("ROLE_PTSTUDENT"))
-            .willReturn(Optional.of(new Authority("ROLE_PTSTUDENT")));
         given(passwordEncoder.encode("비밀번호")).willReturn("encodePassword");
         //when
         userService.signup(studentRequest);
@@ -219,13 +213,13 @@ class UserServiceTest {
         var user = createTeacher();
         String email = user.getEmail();
         Map<String, Object> userInfo = new HashMap<>();
-        user.setRole(new Authority("ROLE_PTTEACHER"));
+        user.setRole("ROLE_PTTEACHER");
         List<String> req = new ArrayList<>(Arrays.asList("email", "nickname"));
         given(userRepository.findByEmail(email)).willReturn(Optional.of(user));
 //        given(ptTeacherRepository.getInfo(email, req)).willReturn(userInfo);
         given(ptTeacherRepository.findByEmail(email)).willReturn(Optional.of(user));
-        userInfo.put("email",user.getEmail());
-        userInfo.put("nickname",user.getNickname());
+        userInfo.put("email", user.getEmail());
+        userInfo.put("nickname", user.getNickname());
 
         //when
         assertEquals(userInfo, userService.getUserInfo(email, req));
@@ -241,7 +235,7 @@ class UserServiceTest {
         var user = createTeacher();
         String email = user.getEmail();
         Map<String, Object> userInfo = new HashMap<>();
-        user.setRole(new Authority("ROLE_PTTEACHER"));
+        user.setRole("ROLE_PTTEACHER");
         List<String> req = new ArrayList<>(Arrays.asList("email", "nickname"));
         given(userRepository.findByEmail(email))
             .willThrow(new UserNotFoundException("해당하는 트레이너는 존재하지 않습니다."));
@@ -260,13 +254,13 @@ class UserServiceTest {
         var user = createStudent();
         String email = user.getEmail();
         Map<String, Object> userInfo = new HashMap<>();
-        user.setRole(new Authority("ROLE_PTSTUDENT"));
+        user.setRole("ROLE_PTSTUDENT");
         List<String> req = new ArrayList<>(Arrays.asList("email", "nickname"));
         given(userRepository.findByEmail(email)).willReturn(Optional.of(user));
 //        given(ptStudentRepository.getInfo(email, req)).willReturn(userInfo);
         given(ptStudentRepository.findByEmail(email)).willReturn(Optional.of(user));
-        userInfo.put("email",user.getEmail());
-        userInfo.put("nickname",user.getNickname());
+        userInfo.put("email", user.getEmail());
+        userInfo.put("nickname", user.getNickname());
 
         //when
         assertEquals(userInfo, userService.getUserInfo(email, req));
@@ -282,7 +276,7 @@ class UserServiceTest {
         var user = createStudent();
         String email = user.getEmail();
         Map<String, Object> userInfo = new HashMap<>();
-        user.setRole(new Authority("ROLE_PTSTUDENT"));
+        user.setRole("ROLE_PTSTUDENT");
         List<String> req = new ArrayList<>(Arrays.asList("email", "nickname"));
         given(userRepository.findByEmail(email))
             .willThrow(new UserNotFoundException("해당하는 학생은 존재하지 않습니다."));

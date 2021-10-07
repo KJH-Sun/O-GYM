@@ -10,11 +10,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /*
-    회원탈퇴한 유저의 JWT ACCESS TOKEN을 만료시키기 위해서 사용하는 Redis 저장소에 대한 환경설정
+    회원탈퇴한 유저의 JWT TOKEN을 만료시키기 위해서 사용하는 Redis 저장소에 대한 환경설정
  */
 
 @Configuration
-public class BlackListConfig {
+public class RedisBlackListConfig {
 
     @Value("${spring.redis.blacklist.host}")
     private String redisHost;
@@ -27,7 +27,7 @@ public class BlackListConfig {
         return new LettuceConnectionFactory(redisHost, redisPort);
     }
 
-    @Bean(name = "redisBlackListTemplate")
+    @Bean
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisBlackListConnectionFactory());

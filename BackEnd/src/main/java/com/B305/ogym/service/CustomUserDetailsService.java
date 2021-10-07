@@ -30,13 +30,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return createUser(email, result);
     }
+
     // 해당 이메일로 인가된 객체 생성
     private org.springframework.security.core.userdetails.User createUser(String username,
         UserBase userBase) {
 
         List<GrantedAuthority> grantedAuthority = new ArrayList<>();
         grantedAuthority
-            .add(new SimpleGrantedAuthority(userBase.getAuthority().getAuthorityName()));
+            .add(new SimpleGrantedAuthority(userBase.getAuthority()));
         return new org.springframework.security.core.userdetails.User(userBase.getEmail(),
             userBase.getPassword(),
             grantedAuthority);
