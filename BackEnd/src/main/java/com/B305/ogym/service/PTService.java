@@ -133,7 +133,7 @@ public class PTService {
         UserBase user = userRepository.findByEmail(email).orElseThrow(() ->
             new UserNotFoundException("해당하는 이메일이 존재하지 않습니다."));
         List<reservationDto> result = new ArrayList<>();
-        if (ROLE_PTTEACHER.equals(user.getAuthority().getAuthorityName())) {
+        if (ROLE_PTTEACHER.equals(user.getAuthority())) {
             ptTeacherRepository.getReservationTime(email).forEach(
                 o -> {
                     result.add(
@@ -172,7 +172,7 @@ public class PTService {
         String teacherEmail = null;
         String studentEmail = null;
         UserBase user = userRepository.findByEmail(userEmail).orElseThrow();
-        if (ROLE_PTTEACHER.equals(user.getAuthority().getAuthorityName())) {
+        if (ROLE_PTTEACHER.equals(user.getAuthority())) {
             teacherEmail = userEmail;
         } else {
             studentEmail = userEmail;
@@ -182,11 +182,10 @@ public class PTService {
         if (nowReservation == null) {
             return null;
         }
-        nowReservationDto result = nowReservationDto.builder()
+        return nowReservationDto.builder()
             .teacherNickname(nowReservation.get(0))
             .studentNickname(nowReservation.get(1))
             .build();
-        return result;
     }
 
     // 선생님 리스트 출력(원하는 정보만 담기)

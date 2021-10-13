@@ -67,7 +67,7 @@ public class PTStudent extends UserBase {
         }else if("address".equals(req)){
             return this.getAddress();
         }else if("role".equals(req)){
-            return this.getAuthority().getAuthorityName();
+            return this.getAuthority();
         }else if("profilePictureURL".equals(req)){
             if(this.getProfilePicture()!= null)
                 return this.getProfilePicture().getPictureAddr();

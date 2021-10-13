@@ -104,7 +104,7 @@ public class PTTeacher extends UserBase {
         }else if("address".equals(req)){
             return this.getAddress();
         }else if("role".equals(req)){
-            return this.getAuthority().getAuthorityName();
+            return this.getAuthority();
         }else if("major".equals(req)){
             return this.getMajor();
         }else if("price".equals(req)){
