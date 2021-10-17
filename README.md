@@ -2,7 +2,7 @@
     <img src="https://user-images.githubusercontent.com/64529208/132216276-38a1c2b5-af46-41c4-9a27-0af2a67fd7ab.png" alt="OGYM_로고-removebg-preview" width="298">    
 </p>
 <p align="center">
-    SSAFY 2학기 공통 프로젝트 - OGYM
+    OGYM
 </p>
 
 
